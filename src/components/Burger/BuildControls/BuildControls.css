@@ -8,3 +8,34 @@
     margin: auto;
     padding: 10px 0;
 }
+
+.Button {
+    display: block;
+    font: inherit;
+    color: black;
+    background-color: rgb(47, 158, 47);
+    padding: 10px 5px;
+    margin: 0 5px;
+    width: 120px;
+    border: 1px solid darkgrey;
+    cursor: pointer;
+    outline: none;
+}
+
+.Button:disabled { 
+    background-color: rgb(112, 172, 112);
+    cursor: default;
+} 
+
+/* .Button:first-of-type {
+    margin-left: 0;
+    padding-left: 0;
+}
+
+.Success {
+    color: #5C9210;
+}
+
+.Danger {
+    color: #944317;
+} */
