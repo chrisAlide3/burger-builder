@@ -45,13 +45,11 @@ class BurgerBuilder extends Component {
         const priceChange = INGREDIENT_PRICES[ingredient];
         let newPrice = null;
 
-        if (oldCount > 0) {
-            newCount = oldCount - 1;
-            newPrice = oldPrice - priceChange;
-        } else {
-            newCount = oldCount;
-            newPrice = oldPrice;
+        if (oldCount <= 0) {
+            return;
         }
+        newCount = oldCount - 1;
+        newPrice = oldPrice - priceChange;
 
         const updatedIngredients = {...this.state.ingredients};
         updatedIngredients[ingredient] = newCount;
@@ -61,15 +59,28 @@ class BurgerBuilder extends Component {
 
 
     render () {
+        //Adding boolean true/false when ingredient type has value 0
+        const disabledInfo = {
+            ...this.state.ingredients
+        };
+
+        for (let key in disabledInfo) {
+            disabledInfo[key] = disabledInfo[key] <= 0;
+        }
+
         return (
             <Aux>
                 <div>
                     <Burger ingredients={this.state.ingredients}/>
-                    <p>Total price of your order: {(Math.round(this.state.totalPrice * 100)/100).toFixed(2)} US$</p>
                 </div>
 
                 <div>
-                    <BuildControls addIngredient={this.addIngredientHandler} removeIngredient={this.removeIngredientHandler}/>
+                    <BuildControls 
+                        addIngredient={this.addIngredientHandler} 
+                        removeIngredient={this.removeIngredientHandler}
+                        disabledInfo={disabledInfo}
+                        totalPrice={this.state.totalPrice}
+                    />
                 </div>
             </Aux>
         )
