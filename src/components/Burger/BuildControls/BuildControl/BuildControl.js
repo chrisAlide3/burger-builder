@@ -9,11 +9,11 @@ const buildControl = (props) => (
         </div>
 
         <button className={classes.Less}
-                onClick={()=>props.changeIngredient(props.ingredientType, '-')}>Less
+                onClick={()=>props.removeIngredient(props.ingredientType)}>Less
         </button>
-        
+
         <button className={classes.More}
-                onClick={()=>props.changeIngredient(props.ingredientType, '+')}
+                onClick={()=>props.addIngredient(props.ingredientType)}
                 >More
         </button>
     </div>
