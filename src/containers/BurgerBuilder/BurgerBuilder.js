@@ -2,6 +2,8 @@ import React, {Component} from 'react';
 
 import Aux from '../../hoc/Aux';
 import Burger from '../../components/Burger/Burger';
+import BuildControls from '../../components/Burger/BuildControls/BuildControls'
+
 
 class BurgerBuilder extends Component {
     state = {
@@ -13,6 +15,17 @@ class BurgerBuilder extends Component {
         }
     }
 
+changeIngredientHandler = (ingredient, operator) => {
+    let newQty = 0;
+    if (operator === '+') {
+        newQty = this.state.ingredients[ingredient] + 1;
+    } else if (this.state.ingredients[ingredient] > 0){
+        newQty = this.state.ingredients[ingredient] - 1;
+    }
+
+    this.setState(Object.assign(this.state.ingredients, {[ingredient]: newQty}));
+}
+
     render () {
         return (
             <Aux>
@@ -21,7 +34,7 @@ class BurgerBuilder extends Component {
                 </div>
 
                 <div>
-                    Build Controls
+                    <BuildControls changeIngredient={this.changeIngredientHandler}/>
                 </div>
             </Aux>
         )
