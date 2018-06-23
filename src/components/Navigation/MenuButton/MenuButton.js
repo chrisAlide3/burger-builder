@@ -13,10 +13,11 @@ const menuButton = (props) => {
     }
 
     return (
-        <div className={classes.MenuButton}>
-            <a onClick={props.click}>
+        <div 
+            className={classes.MenuButton} 
+            onClick={props.click}>
+            
                 <img src={menuImage} alt='menu button'/>
-            </a>
         </div>
     )
 }

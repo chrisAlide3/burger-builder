@@ -1,8 +1,10 @@
 import React from 'react';
 import Logo from '../../Logo/Logo';
 import NavigationItems from '../NavigationItems/NavigationItems';
+import Backdrop from '../../UI/Backdrop/Backdrop';
 import classes from './SideDrawer.css';
 import MenuButton from '../MenuButton/MenuButton';
+import Aux from '../../../hoc/Aux';
 
 const sideDrawer = (props) => {
     let displayClasses = [];
@@ -13,20 +15,26 @@ const sideDrawer = (props) => {
     }
 
     return (
-        <div className={displayClasses.join(' ')}>
-            <div className={classes.MenuButton}>
-                <MenuButton 
-                    color='black'
-                    click={props.sideDrawerHandler}/>
-            </div>
-            <div className={classes.Logo}>
-                <Logo />
-            </div>
+        <Aux>
+            <Backdrop 
+                show={props.show}
+                clicked={props.sideDrawerHandler}
+            />
+            <div className={displayClasses.join(' ')}>
+                <div className={classes.MenuButton}>
+                    <MenuButton 
+                        color='black'
+                        click={props.sideDrawerHandler}/>
+                </div>
+                <div className={classes.Logo}>
+                    <Logo />
+                </div>
 
-            <nav>
-                 <NavigationItems/>
-            </nav>
-        </div>
+                <nav>
+                    <NavigationItems/>
+                </nav>
+            </div>
+        </Aux>
     )
 }
 
