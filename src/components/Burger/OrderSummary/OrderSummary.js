@@ -24,7 +24,7 @@ const orderSummary = (props) => {
 
             <Button 
                 btnType='Success' 
-                clicked={props.continue}
+                clicked={() => {props.continue()}}
                 >CONTINUE
             </Button>
 

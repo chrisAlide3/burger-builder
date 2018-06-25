@@ -5,6 +5,8 @@ import Burger from '../../components/Burger/Burger';
 import BuildControls from '../../components/Burger/BuildControls/BuildControls'
 import Modal from '../../components/UI/Modal/Modal';
 import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary';
+import Spinner from '../../components/UI/Spinner/Spinner';
+import axios from 'axios';
 
 const INGREDIENT_PRICES = {
     salad: 0.5,
@@ -23,6 +25,7 @@ const initialState = {
     totalPrice: 4,
     purchasable: false,
     purchasing: false,
+    loading: false,
 };
 
 class BurgerBuilder extends Component {
@@ -37,7 +40,25 @@ class BurgerBuilder extends Component {
     }
 
     purchaseContinueHandler = () => {
-        alert('You continue to the purchasing');
+        this.setState({loading: true});
+
+        const order = {
+            ingredients: this.state.ingredients,
+            customer: {
+                name: 'Chris B',
+                email: 'test@test.com',
+            },
+            totalPrice: this.state.totalPrice,
+        };
+
+        axios.post('https://burger-builder-e8d73.firebaseio.com/orders.json', order)
+            .then(response => {
+                this.setState({loading: false, purchasing: false});
+            })
+            .catch(err => {
+                this.setState({loading: false, purchasing: false});
+            })
+        // alert('You continue to the purchasing');
     }
 
     updatePurchaseState = (ingredients) => {
@@ -97,15 +118,19 @@ class BurgerBuilder extends Component {
         for (let key in disabledInfo) {
             disabledInfo[key] = disabledInfo[key] <= 0;
         }
+        
 
         return (
             <Aux>
                 <Modal show={this.state.purchasing}
                         modalClosed={this.purchaseCancelHandler}>
-                    <OrderSummary ingredients={this.state.ingredients} 
+                    {this.state.loading
+                    ? <Spinner />
+                    : <OrderSummary ingredients={this.state.ingredients} 
                                     price={this.state.totalPrice}
                                     continue={this.purchaseContinueHandler}
-                                    cancel={this.purchaseCancelHandler} />
+                                    cancel={this.purchaseCancelHandler} 
+                        />}
                 </Modal>
 
                 <div>
