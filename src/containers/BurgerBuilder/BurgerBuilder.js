@@ -22,18 +22,20 @@ const initialState = {
     purchasable: false,
     purchasing: false,
     loading: false,
+    error: false,
 };
 
 class BurgerBuilder extends Component {
     state = initialState;
 
     componentDidMount() {
+        this.setState({loading: true});
         axios.get('https://burger-builder-e8d73.firebaseio.com/ingredients.json')
         .then(response => {
-            this.setState({ingredients: response.data})
+            this.setState({ingredients: response.data, loading:false})
         })
         .catch(err => {
-            console.log(err);
+            this.setState({error: true, loading:false})
         })
         ;
     }
@@ -141,19 +143,23 @@ class BurgerBuilder extends Component {
                 </Modal>
 
                 <div>
-                    <Burger ingredients={this.state.ingredients}/>
-                </div>
-
-                <div>
-
-                    <BuildControls 
-                        addIngredient={this.addIngredientHandler} 
-                        removeIngredient={this.removeIngredientHandler}
-                        disabledInfo={disabledInfo}
-                        totalPrice={this.state.totalPrice}
-                        purchasable={this.state.purchasable}
-                        purchase={this.purchaseHandler}                    />
-
+                    {this.state.error
+                    ?<p style={{textAlign: 'center'}}>There was an error loading the ingredient</p>
+                    :<Aux>
+                        {this.state.loading
+                        ?<Spinner />
+                        :<Burger ingredients={this.state.ingredients}/>}
+                        
+                        <div>
+                        <BuildControls 
+                            addIngredient={this.addIngredientHandler} 
+                            removeIngredient={this.removeIngredientHandler}
+                            disabledInfo={disabledInfo}
+                            totalPrice={this.state.totalPrice}
+                            purchasable={this.state.purchasable}
+                            purchase={this.purchaseHandler}                    />
+                        </div>
+                    </Aux>}
                 </div>
 
             </Aux>
