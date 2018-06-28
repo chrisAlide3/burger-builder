@@ -22,7 +22,7 @@ const initialState = {
     totalPrice: 4,
     purchasable: false,
     purchasing: false,
-    checkout: false,
+    goCheckout: false,
     loading: false,
     error: false,
 };
@@ -47,29 +47,30 @@ class BurgerBuilder extends Component {
     }
 
     purchaseCancelHandler = () => {
-        this.setState({purchasing: false})
+        this.setState({purchasing: false});
+        this.setState({goCheckout: false});
     }
 
     purchaseContinueHandler = () => {
-        this.setState({loading: true});
+        this.setState({loading: false, purchasing: false, goCheckout: true});
 
-        const order = {
-            ingredients: this.state.ingredients,
-            customer: {
-                name: 'Chris B',
-                email: 'test@test.com',
-            },
-            totalPrice: this.state.totalPrice,
-        };
 
-        axios.post('https://burger-builder-e8d73.firebaseio.com/orders.json', order)
-            .then(response => {
-                this.setState({loading: false, purchasing: false, checkout: true});
-            })
-            .catch(err => {
-                this.setState({loading: false, purchasing: false, checkout: false});
-            })
-        // alert('You continue to the purchasing');
+        // const order = {
+        //     ingredients: this.state.ingredients,
+        //     customer: {
+        //         name: 'Chris B',
+        //         email: 'test@test.com',
+        //     },
+        //     totalPrice: this.state.totalPrice,
+        // };
+
+        // axios.post('https://burger-builder-e8d73.firebaseio.com/orders.json', order)
+        //     .then(response => {
+        //         this.setState({loading: false, purchasing: false, goCheckout: true});
+        //     })
+        //     .catch(err => {
+        //         this.setState({loading: false, purchasing: false, goCheckout: false});
+        //     })
     }
 
     updatePurchaseState = (ingredients) => {
@@ -133,9 +134,10 @@ class BurgerBuilder extends Component {
 
         return (
             <Aux>
-                {this.state.checkout
+                {this.state.goCheckout
                 ?<Checkout ingredients={this.state.ingredients} 
-                            price={this.state.totalPrice}/>
+                            price={this.state.totalPrice}
+                            purchaseCancel={this.purchaseCancelHandler}/>
 
                 :<Modal show={this.state.purchasing}
                         modalClosed={this.purchaseCancelHandler}>
@@ -148,7 +150,7 @@ class BurgerBuilder extends Component {
                         />}
                 </Modal>}
 
-                {!this.state.checkout
+                {!this.state.goCheckout
                 ?<div>
                     {this.state.error
                     ?<p style={{textAlign: 'center'}}>There was an error loading the ingredient</p>
