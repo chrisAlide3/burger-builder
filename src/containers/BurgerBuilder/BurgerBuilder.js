@@ -5,6 +5,7 @@ import Burger from '../../components/Burger/Burger';
 import BuildControls from '../../components/Burger/BuildControls/BuildControls'
 import Modal from '../../components/UI/Modal/Modal';
 import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary';
+import Checkout from '../Checkout/Checkout';
 import Spinner from '../../components/UI/Spinner/Spinner';
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
 import axios from 'axios';
@@ -21,6 +22,7 @@ const initialState = {
     totalPrice: 4,
     purchasable: false,
     purchasing: false,
+    checkout: false,
     loading: false,
     error: false,
 };
@@ -62,10 +64,10 @@ class BurgerBuilder extends Component {
 
         axios.post('https://burger-builder-e8d73.firebaseio.com/orders.json', order)
             .then(response => {
-                this.setState({loading: false, purchasing: false});
+                this.setState({loading: false, purchasing: false, checkout: true});
             })
             .catch(err => {
-                this.setState({loading: false, purchasing: false});
+                this.setState({loading: false, purchasing: false, checkout: false});
             })
         // alert('You continue to the purchasing');
     }
@@ -131,7 +133,11 @@ class BurgerBuilder extends Component {
 
         return (
             <Aux>
-                <Modal show={this.state.purchasing}
+                {this.state.checkout
+                ?<Checkout ingredients={this.state.ingredients} 
+                            price={this.state.totalPrice}/>
+
+                :<Modal show={this.state.purchasing}
                         modalClosed={this.purchaseCancelHandler}>
                     {this.state.loading
                     ? <Spinner />
@@ -140,9 +146,10 @@ class BurgerBuilder extends Component {
                                     continue={this.purchaseContinueHandler}
                                     cancel={this.purchaseCancelHandler} 
                         />}
-                </Modal>
+                </Modal>}
 
-                <div>
+                {!this.state.checkout
+                ?<div>
                     {this.state.error
                     ?<p style={{textAlign: 'center'}}>There was an error loading the ingredient</p>
                     :<Aux>
@@ -161,7 +168,7 @@ class BurgerBuilder extends Component {
                         </div>
                     </Aux>}
                 </div>
-
+                :null}
             </Aux>
         )
     }
