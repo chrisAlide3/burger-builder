@@ -1,59 +1,62 @@
 import React, { Component } from 'react';
-import axios from 'axios';
+// import axios from 'axios';
 
 import classes from './Checkout.css';
 import CheckoutSummary from '../../components/Order/CheckoutSummary/CheckoutSummary';
 
 class Checkout extends Component {
     state = {
-        checkout: false,
-        loading: false,
-        ordered: false,
+        ingredients: {},
+        totalPrice: 7.55,
     }
 
+    componentDidMount () {
+        const query = new URLSearchParams(this.props.location.search);
+        
+
+        const ingredients = {};
+        for (let param of query.entries()) {
+            ingredients[param[0]] = +param[1];
+        }
+        console.log(ingredients);
+        this.setState({ingredients: ingredients});
+    }
     orderSaveHandler = () => {
-        this.setState({loading: true});
+        // const order = {
+        //     ingredients: this.state.ingredients,
+        //     customer: {
+        //         name: 'Chris B',
+        //         email: 'test@test.com',
+        //     },
+        //     totalPrice: this.state.totalPrice,
+        // };
 
-        const order = {
-            ingredients: this.props.ingredients,
-            customer: {
-                name: 'Chris B',
-                email: 'test@test.com',
-            },
-            totalPrice: this.props.totalPrice,
-        };
-
-        axios.post('https://burger-builder-e8d73.firebaseio.com/orders.json', order)
-            .then(response => {
-                this.setState({loading: false, ordered: true});
-            })
-            .catch(err => {
-                this.setState({loading: false, ordered: false});
-            })
+        // axios.post('https://burger-builder-e8d73.firebaseio.com/orders.json', order)
+        //     .then(response => {
+        //     })
+        //     .catch(err => {
+        //     })
     }
 
     checkoutContinueHandler = () => {
-        this.setState({checkout: true});
+        this.props.history.push("/checkout/contact-data");
+    }
+
+    checkoutCancelHandler  = () => {
+        this.props.history.goBack();
     }
 
     
     render (props) {
-
-        // const ingredients = Object.keys(this.props.ingredients)
-        //     .map(igKey => {
-        //         return (
-        //             <li key={igKey}>{igKey}: {this.props.ingredients[igKey]}</li>
-        //         );
-        //     });
-
+        
         return (
             <div className={classes.Checkout}>
                 <h1>Your Order:</h1>
                 <CheckoutSummary 
-                    ingredients={this.props.ingredients}
-                    price={this.props.price}
+                    ingredients={this.state.ingredients}
+                    price={this.state.totalPrice}
                     checkoutContinue={this.checkoutContinueHandler}
-                    checkoutCancel={this.props.purchaseCancel}/>
+                    checkoutCancel={this.checkoutCancelHandler}/>
             </div>
         );
     }

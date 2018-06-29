@@ -1,14 +1,13 @@
 import React, {Component} from 'react';
+import axios from 'axios';
 
 import Aux from '../../hoc/Aux/Aux';
 import Burger from '../../components/Burger/Burger';
 import BuildControls from '../../components/Burger/BuildControls/BuildControls'
 import Modal from '../../components/UI/Modal/Modal';
 import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary';
-import Checkout from '../Checkout/Checkout';
 import Spinner from '../../components/UI/Spinner/Spinner';
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
-import axios from 'axios';
 
 const INGREDIENT_PRICES = {
     salad: 0.5,
@@ -48,11 +47,21 @@ class BurgerBuilder extends Component {
 
     purchaseCancelHandler = () => {
         this.setState({purchasing: false});
-        this.setState({goCheckout: false});
     }
 
     purchaseContinueHandler = () => {
-        this.setState({loading: false, purchasing: false, goCheckout: true});
+        // Pass the ingredients object as Querystring in the push method
+        const queryParams = [];
+        for (let i in this.state.ingredients) {
+            queryParams.push(encodeURIComponent(i) + '=' + encodeURIComponent(this.state.ingredients[i]));
+        };
+        const queryString = queryParams.join('&');
+
+        this.props.history.push({
+            pathname: '/checkout',
+            search: '?' + queryString,
+        });
+        
 
 
         // const order = {
@@ -134,12 +143,7 @@ class BurgerBuilder extends Component {
 
         return (
             <Aux>
-                {this.state.goCheckout
-                ?<Checkout ingredients={this.state.ingredients} 
-                            price={this.state.totalPrice}
-                            purchaseCancel={this.purchaseCancelHandler}/>
-
-                :<Modal show={this.state.purchasing}
+                <Modal show={this.state.purchasing}
                         modalClosed={this.purchaseCancelHandler}>
                     {this.state.loading
                     ? <Spinner />
@@ -148,10 +152,9 @@ class BurgerBuilder extends Component {
                                     continue={this.purchaseContinueHandler}
                                     cancel={this.purchaseCancelHandler} 
                         />}
-                </Modal>}
+                </Modal>
 
-                {!this.state.goCheckout
-                ?<div>
+                <div>
                     {this.state.error
                     ?<p style={{textAlign: 'center'}}>There was an error loading the ingredient</p>
                     :<Aux>
@@ -170,7 +173,6 @@ class BurgerBuilder extends Component {
                         </div>
                     </Aux>}
                 </div>
-                :null}
             </Aux>
         )
     }
