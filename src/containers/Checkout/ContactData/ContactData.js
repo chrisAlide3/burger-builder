@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
 import axios from 'axios';
+import { withRouter} from 'react-router-dom';
 
 import classes from './ContactData.css';
 import Button from '../../../components//UI/Button/Button';
+import Spinner from '../../../components/UI/Spinner/Spinner';
 
 class ContactData extends Component {
     state = {
-        ingredients: {},
+        loading: false,
 
         name: '',
         email: '',
@@ -14,25 +16,16 @@ class ContactData extends Component {
         postcode: '',
     }
 
-    componentDidMount () {
-        const query = new URLSearchParams(this.props.location.search);
-
-        const ingredients = {};
-        for (let param of query.entries()) {
-            ingredients[param[0]] = +param[1];
-        }
-        
-        this.setState({ingredients: ingredients});
-    }
-
-
     inputChangeHandler = (event) => {
         this.setState({[event.target.name]: event.target.value});
     }
 
-    orderBtnHandler = () => {
+    orderBtnHandler = (event) => {
+        event.preventDefault();
+        this.setState({loading: true});
         const order = {
-            ingredients: this.state.ingredients,
+            ingredients: this.props.ingredients,
+            totalPrice: this.props.price,
             customer: {
                 name: this.state.name,
                 email:this.state.email,
@@ -41,24 +34,23 @@ class ContactData extends Component {
                     postcode: this.state.postcode,
                 },
             },
-            // totalPrice: this.state.totalPrice,
         };
 
         axios.post('https://burger-builder-e8d73.firebaseio.com/orders.json', order)
             .then(response => {
+                this.setState({loading: false});
                 this.props.history.push("/");
             })
             .catch(err => {
+                this.setState({loading: true});
                 console.log('There was an error: ', err);
             })
     }
 
-    render (props) {
+    render () {
 
-    return (
-        <div className={classes.ContactData}>
-            <h4>Enter your Contact data</h4>
-            <div>
+        let form = (
+            <form>
                 <input className={classes.Input} 
                     type='text' 
                     name='name' 
@@ -93,9 +85,19 @@ class ContactData extends Component {
                     clicked={this.orderBtnHandler} 
                 >ORDER
                 </Button>
-            </div>
+            </form>
+        );
+
+        if (this.state.loading) {
+            form = (<Spinner />);
+        }
+
+    return (
+        <div className={classes.ContactData}>
+            <h4>Enter your Contact data</h4>
+            {form}
         </div>
     );
 }}
 
-export default ContactData;
+export default withRouter(ContactData);

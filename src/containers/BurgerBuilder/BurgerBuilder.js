@@ -55,31 +55,14 @@ class BurgerBuilder extends Component {
         for (let i in this.state.ingredients) {
             queryParams.push(encodeURIComponent(i) + '=' + encodeURIComponent(this.state.ingredients[i]));
         };
+        queryParams.push('price=' + this.state.totalPrice);
+        
         const queryString = queryParams.join('&');
-
+    
         this.props.history.push({
             pathname: '/checkout',
             search: '?' + queryString,
         });
-        
-
-
-        // const order = {
-        //     ingredients: this.state.ingredients,
-        //     customer: {
-        //         name: 'Chris B',
-        //         email: 'test@test.com',
-        //     },
-        //     totalPrice: this.state.totalPrice,
-        // };
-
-        // axios.post('https://burger-builder-e8d73.firebaseio.com/orders.json', order)
-        //     .then(response => {
-        //         this.setState({loading: false, purchasing: false, goCheckout: true});
-        //     })
-        //     .catch(err => {
-        //         this.setState({loading: false, purchasing: false, goCheckout: false});
-        //     })
     }
 
     updatePurchaseState = (ingredients) => {
