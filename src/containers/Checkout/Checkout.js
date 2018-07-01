@@ -1,13 +1,12 @@
 import React, { Component } from 'react';
 // import axios from 'axios';
 
-import classes from './Checkout.css';
 import CheckoutSummary from '../../components/Order/CheckoutSummary/CheckoutSummary';
 
 class Checkout extends Component {
     state = {
         ingredients: {},
-        totalPrice: 7.55,
+        totalPrice: 0,
     }
 
     componentDidMount () {
@@ -20,25 +19,18 @@ class Checkout extends Component {
         
         this.setState({ingredients: ingredients});
     }
-    orderSaveHandler = () => {
-        // const order = {
-        //     ingredients: this.state.ingredients,
-        //     customer: {
-        //         name: 'Chris B',
-        //         email: 'test@test.com',
-        //     },
-        //     totalPrice: this.state.totalPrice,
-        // };
-
-        // axios.post('https://burger-builder-e8d73.firebaseio.com/orders.json', order)
-        //     .then(response => {
-        //     })
-        //     .catch(err => {
-        //     })
-    }
 
     checkoutContinueHandler = () => {
-        this.props.history.push("/checkout/contact-data");
+        const queryParams = [];
+        for (let i in this.state.ingredients) {
+            queryParams.push(encodeURIComponent(i) + '=' + encodeURIComponent(this.state.ingredients[i]));
+        };
+        const queryString = queryParams.join('&');
+
+        this.props.history.push({
+            pathname: '/checkout/contact-data',
+            search: '?' + queryString,
+        });
     }
 
     checkoutCancelHandler  = () => {
@@ -49,8 +41,7 @@ class Checkout extends Component {
     render (props) {
         
         return (
-            <div className={classes.Checkout}>
-                <h1>Your Order:</h1>
+            <div>
                 <CheckoutSummary 
                     ingredients={this.state.ingredients}
                     price={this.state.totalPrice}
