@@ -77,20 +77,19 @@ class ContactData extends Component {
         this.setState({orderForm: updatedOrderForm});
     }
 
-    orderBtnHandler = (event) => {
+    orderSubmitHandler = (event) => {
         event.preventDefault();
         this.setState({loading: true});
 
-        const orderFormFields = {...this.state.orderForm};
-        let customer = {};
-        for (let field in orderFormFields) {
-            customer[field] = orderFormFields[field].value; 
+        const formData = {};
+        for (let field in this.state.orderForm) {
+         formData[field] = this.state.orderForm[field].value; 
         }
 
         const order = {
             ingredients: this.props.ingredients,
             totalPrice: this.props.price,
-            customer: customer,
+            customer: formData,
         };
 
         axios.post('https://burger-builder-e8d73.firebaseio.com/orders.json', order)
@@ -117,7 +116,7 @@ class ContactData extends Component {
         }
 
         let form = (
-            <form>
+            <form onSubmit={this.orderSubmitHandler}>
                 {formElementArray.map((formElement) => {
                     return (
                         <Input
@@ -168,7 +167,7 @@ class ContactData extends Component {
                 /> */}
 
                 <Button btnType='Success'
-                    clicked={this.orderBtnHandler} 
+                    // clicked={this.orderBtnHandler} 
                 >ORDER
                 </Button>
             </form>
