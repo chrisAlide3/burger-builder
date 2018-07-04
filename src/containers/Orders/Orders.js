@@ -47,13 +47,14 @@ class Orders extends Component {
     }
 
     render () {
+
         let order = (<p><strong>No orders have been placed!</strong></p>);
 
         if (this.state.loading) {
             order = (<Spinner />)
         } else {
 
-        if (this.state.orders) {
+        if (this.state.orders.length) {
             order = this.state.orders.map((order) => {
                     return (
                         <li key={order.id}>
